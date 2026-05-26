@@ -1,0 +1,348 @@
+{
+  "version": "7.3",
+  "data_api_version": "3.0",
+  "routing_model": {
+    "USER_LOOKUP": [
+      "USER_REGISTER",
+      "CATEGORIES"
+    ],
+    "USER_REGISTER": [
+      "CATEGORIES"
+    ],
+    "CATEGORIES": [
+      "SUBCATEGORIES"
+    ],
+    "SUBCATEGORIES": [
+      "DETAILS"
+    ],
+    "DETAILS": []
+  },
+  "screens": [
+    {
+      "id": "USER_LOOKUP",
+      "title": "Identificación ciudadana",
+      "data": {
+        "info_text": {
+          "type": "string",
+          "__example__": "Para registrar tu reporte necesitamos identificarte."
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextBody",
+            "text": "${data.info_text}"
+          },
+          {
+            "type": "Form",
+            "name": "form_lookup",
+            "children": [
+              {
+                "type": "TextInput",
+                "label": "Número de cédula",
+                "name": "cedula",
+                "required": true,
+                "input-type": "number",
+                "helper-text": "10 dígitos, sin espacios ni guiones"
+              },
+              {
+                "type": "Footer",
+                "label": "Continuar",
+                "on-click-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "screen": "USER_LOOKUP",
+                    "cedula": "${form.cedula}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "USER_REGISTER",
+      "title": "Verificar identidad",
+      "data": {
+        "cedula": {
+          "type": "string",
+          "__example__": "0803768530"
+        },
+        "message": {
+          "type": "string",
+          "__example__": "No encontramos tu registro. Verifica tu identidad para continuar."
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextSubheading",
+            "text": "Verificación requerida"
+          },
+          {
+            "type": "TextBody",
+            "text": "${data.message}"
+          },
+          {
+            "type": "Form",
+            "name": "form_register",
+            "children": [
+              {
+                "type": "TextInput",
+                "label": "Número de cédula",
+                "name": "cedula",
+                "required": true,
+                "input-type": "number"
+              },
+              {
+                "type": "DatePicker",
+                "label": "Fecha de expedición de la cédula",
+                "name": "fecha_expedicion",
+                "required": true,
+                "helper-text": "Fecha que aparece al reverso de tu cédula (DD/MM/AAAA)"
+              },
+              {
+                "type": "Footer",
+                "label": "Verificar identidad",
+                "on-click-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "screen": "USER_REGISTER",
+                    "cedula": "${form.cedula}",
+                    "fecha_expedicion": "${form.fecha_expedicion}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "CATEGORIES",
+      "title": "Tipo de incidente",
+      "data": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          "__example__": [
+            {
+              "id": "664abc001",
+              "title": "Vialidad"
+            },
+            {
+              "id": "664abc002",
+              "title": "Alumbrado Público"
+            },
+            {
+              "id": "664abc003",
+              "title": "Alcantarillado"
+            }
+          ]
+        },
+        "user_name": {
+          "type": "string",
+          "__example__": "Samuel"
+        },
+        "cedula": {
+          "type": "string",
+          "__example__": "0803768530"
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextBody",
+            "text": "Hola ${data.user_name} 👋, selecciona la categoría que mejor describe tu reporte:"
+          },
+          {
+            "type": "Form",
+            "name": "form_category",
+            "children": [
+              {
+                "type": "Dropdown",
+                "label": "Categoría",
+                "name": "category_id",
+                "required": true,
+                "data-source": "${data.categories}"
+              },
+              {
+                "type": "Footer",
+                "label": "Siguiente",
+                "on-click-action": {
+                  "name": "data_exchange",
+                  "payload": {
+                    "screen": "CATEGORIES",
+                    "category_id": "${form.category_id}",
+                    "cedula": "${data.cedula}",
+                    "user_name": "${data.user_name}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "SUBCATEGORIES",
+      "title": "Subcategoría",
+      "data": {
+        "subcategories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          },
+          "__example__": [
+            {
+              "id": "664bcd001",
+              "title": "Bache",
+              "description": "Huecos o hundimientos en la vía"
+            },
+            {
+              "id": "664bcd002",
+              "title": "Semáforo",
+              "description": "Semáforo en mal estado o apagado"
+            }
+          ]
+        },
+        "category_id": {
+          "type": "string",
+          "__example__": "664abc001"
+        },
+        "cedula": {
+          "type": "string",
+          "__example__": "0803768530"
+        },
+        "user_name": {
+          "type": "string",
+          "__example__": "Samuel"
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextBody",
+            "text": "Selecciona la subcategoría que mejor describe el problema:"
+          },
+          {
+            "type": "Form",
+            "name": "form_subcategory",
+            "children": [
+              {
+                "type": "Dropdown",
+                "label": "Subcategoría",
+                "name": "subcategory_id",
+                "required": true,
+                "data-source": "${data.subcategories}"
+              },
+              {
+                "type": "Footer",
+                "label": "Siguiente",
+                "on-click-action": {
+                  "name": "navigate",
+                  "next": {
+                    "type": "screen",
+                    "name": "DETAILS"
+                  },
+                  "payload": {
+                    "subcategory_id": "${form.subcategory_id}",
+                    "category_id": "${data.category_id}",
+                    "cedula": "${data.cedula}",
+                    "user_name": "${data.user_name}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "DETAILS",
+      "title": "Detalles del reporte",
+      "terminal": true,
+      "success": true,
+      "data": {
+        "category_id": {
+          "type": "string",
+          "__example__": "664abc001"
+        },
+        "subcategory_id": {
+          "type": "string",
+          "__example__": "664bcd001"
+        },
+        "cedula": {
+          "type": "string",
+          "__example__": "0803768530"
+        },
+        "user_name": {
+          "type": "string",
+          "__example__": "Samuel"
+        }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextBody",
+            "text": "Describe el problema con el mayor detalle posible. Puedes incluir la dirección exacta y cualquier información relevante."
+          },
+          {
+            "type": "Form",
+            "name": "form_details",
+            "children": [
+              {
+                "type": "TextArea",
+                "label": "Descripción",
+                "name": "descripcion",
+                "required": true,
+                "helper-text": "Mínimo 15 caracteres. Sé específico sobre el lugar y el problema."
+              },
+              {
+                "type": "Footer",
+                "label": "Enviar reporte",
+                "on-click-action": {
+                  "name": "complete",
+                  "payload": {
+                    "cedula": "${data.cedula}",
+                    "user_name": "${data.user_name}",
+                    "category_id": "${data.category_id}",
+                    "subcategory_id": "${data.subcategory_id}",
+                    "descripcion": "${form.descripcion}"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

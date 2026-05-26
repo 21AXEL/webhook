@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"systemId":{"$numberInt":"1"}},"name":"systemId_1","background":true,"unique":true}],"uuid":"afa2273ce3454aba9e1721422db58d19","collectionName":"externalsystems","type":"collection"}

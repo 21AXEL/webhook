@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"5cc031de27eb49e5bf39816fec110ba4","collectionName":"dnis_duplicados_export","type":"collection"}

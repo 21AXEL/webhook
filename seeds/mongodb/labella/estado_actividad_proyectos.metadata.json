@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"nombre":{"$numberInt":"1"}},"name":"nombre_1","background":true,"unique":true}],"uuid":"512427059a4e4195912275a07e900b10","collectionName":"estado_actividad_proyectos","type":"collection"}

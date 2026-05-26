@@ -1,0 +1,102 @@
+{
+    "version": "7.3",
+    "screens": [
+        {
+            "id": "TICKET_TECNICO",
+            "title": "Soporte Técnico",
+            "terminal": true,
+            "data": {},
+            "layout": {
+                "type": "SingleColumnLayout",
+                "children": [
+                    {
+                        "type": "Form",
+                        "name": "form_ticket",
+                        "children": [
+                            {
+                                "type": "Dropdown",
+                                "label": "Categoría",
+                                "name": "categoria",
+                                "required": true,
+                                "data-source": [
+                                    {
+                                        "id": "INTERNET",
+                                        "title": "🌐 Internet / Conectividad"
+                                    },
+                                    {
+                                        "id": "COMPUTERS",
+                                        "title": "🖥️ Computadores / Equipos"
+                                    },
+                                    {
+                                        "id": "PRINTERS",
+                                        "title": "🖨️ Impresoras"
+                                    },
+                                    {
+                                        "id": "SERVERS",
+                                        "title": "🗄️ Servidores"
+                                    },
+                                    {
+                                        "id": "WIFI",
+                                        "title": "📶 WiFi / Red inalámbrica"
+                                    },
+                                    {
+                                        "id": "EMAIL",
+                                        "title": "📧 Correo institucional"
+                                    },
+                                    {
+                                        "id": "CABILDO",
+                                        "title": "🏛️ Sistema Cabildo"
+                                    },
+                                    {
+                                        "id": "SIGDAR",
+                                        "title": "📋 SIGDAR"
+                                    },
+                                    {
+                                        "id": "SIGCAL",
+                                        "title": "📊 SIGCAL"
+                                    },
+                                    {
+                                        "id": "ERP",
+                                        "title": "⚙️ ERP"
+                                    },
+                                    {
+                                        "id": "OTHER",
+                                        "title": "📌 Otro"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "TextInput",
+                                "label": "Ubicación",
+                                "name": "ubicacion",
+                                "required": true,
+                                "helper-text": "Ej: Edificio Central, piso 2",
+                                "max-chars": 150
+                            },
+                            {
+                                "type": "TextArea",
+                                "label": "Describe el problema",
+                                "name": "descripcion",
+                                "required": true,
+                                "helper-text": "Describe con el mayor detalle posible qué ocurre"
+                            },
+                            {
+                                "type": "Footer",
+                                "label": "Enviar solicitud",
+                                "on-click-action": {
+                                    "name": "complete",
+                                    "payload": {
+                                        "linea": "TECHNICAL_SUPPORT",
+                                        "categoria": "${form.categoria}",
+                                        "ubicacion": "${form.ubicacion}",
+                                        "descripcion": "${form.descripcion}"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

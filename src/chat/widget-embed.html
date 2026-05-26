@@ -1,0 +1,159 @@
+<!--
+  widget-embed.html
+  ─────────────────────────────────────────────────────────────────────────────
+  Snippet para incrustar el widget de chat TIS en cualquier página web.
+  Copia este bloque al final del <body> de tu sitio.
+  ─────────────────────────────────────────────────────────────────────────────
+-->
+
+<style>
+  #tis-chat-launcher {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    font-family: system-ui, sans-serif;
+  }
+
+  #tis-chat-frame {
+    width: 380px;
+    height: 580px;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    display: none;
+    background: white;
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+    transform-origin: bottom right;
+  }
+
+  #tis-chat-frame.open {
+    display: block;
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  #tis-chat-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #185fa5;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(24, 95, 165, 0.4);
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+    position: relative;
+  }
+
+  #tis-chat-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(24, 95, 165, 0.5);
+  }
+
+  #tis-chat-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: white;
+  }
+
+  #tis-chat-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #e24b4a;
+    border: 2px solid white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: white;
+    line-height: 1;
+  }
+</style>
+
+<div id="tis-chat-launcher">
+  <!-- Panel del widget en iframe aislado -->
+  <iframe
+    id="tis-chat-frame"
+    title="Helpdesk TIS — Chat de soporte"
+    src="http://localhost:3000/chat-ui/complete-chat.html"
+    allow="microphone"
+    sandbox="allow-scripts allow-same-origin allow-forms"
+  ></iframe>
+
+  <!-- Botón flotante -->
+  <button id="tis-chat-btn" aria-label="Abrir chat de soporte">
+    <!-- Ícono de chat -->
+    <svg
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.05 21.95l4.782-1.388A9.954 9.954 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"
+      />
+    </svg>
+    <span id="tis-chat-badge" aria-hidden="true">1</span>
+  </button>
+</div>
+
+<script>
+  (function () {
+    const btn = document.getElementById("tis-chat-btn");
+    const frame = document.getElementById("tis-chat-frame");
+    const badge = document.getElementById("tis-chat-badge");
+
+    let open = false;
+    let hasNewMsg = true; // mostrar badge al inicio
+
+    if (hasNewMsg) {
+      badge.style.display = "flex";
+    }
+
+    btn.addEventListener("click", function () {
+      open = !open;
+      frame.classList.toggle("open", open);
+
+      // Limpiar badge al abrir
+      if (open) {
+        badge.style.display = "none";
+        hasNewMsg = false;
+      }
+
+      // Cambiar ícono del botón
+      btn.innerHTML = open
+        ? `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white" aria-hidden="true">
+           <path d="M18 6L6 18M6 6l12 12" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+         </svg>`
+        : `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="white" aria-hidden="true">
+           <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.05 21.95l4.782-1.388A9.954 9.954 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
+         </svg>
+         <span id="tis-chat-badge" aria-hidden="true" style="display:none"></span>`;
+    });
+
+    // Escuchar mensajes del iframe (para badge cuando está cerrado)
+    window.addEventListener("message", function (e) {
+      if (e.data?.type === "TIS_NEW_MESSAGE" && !open) {
+        badge.style.display = "flex";
+        badge.textContent = (parseInt(badge.textContent || "0") + 1).toString();
+      }
+    });
+  })();
+</script>

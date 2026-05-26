@@ -1,0 +1,445 @@
+{
+    "info": {
+        "name": "Helpdesk TIS — Municipio de Esmeraldas",
+        "description": "Colección de endpoints del sistema de helpdesk WhatsApp.\n\nVariables de entorno requeridas:\n- `base_url` → ej: http://localhost:3000\n- `admin_secret` → valor de ADMIN_API_SECRET en .env\n- `rating_token` → token de calificación de un ticket resuelto",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "admin_secret",
+            "value": "pon_aqui_tu_admin_secret",
+            "type": "string"
+        },
+        {
+            "key": "rating_token",
+            "value": "",
+            "type": "string",
+            "description": "UUID del ratingToken de un ticket en estado RESOLVED"
+        },
+        {
+            "key": "whatsapp_verify_token",
+            "value": "tu_verify_token_de_meta",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "WhatsApp Webhook",
+            "description": "Endpoints del webhook de WhatsApp Business (Meta).",
+            "item": [
+                {
+                    "name": "Verificar webhook (Meta)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/whatsapp/webhook?hub.mode=subscribe&hub.verify_token={{whatsapp_verify_token}}&hub.challenge=CHALLENGE_ACCEPTED",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "whatsapp",
+                                "webhook"
+                            ],
+                            "query": [
+                                {
+                                    "key": "hub.mode",
+                                    "value": "subscribe"
+                                },
+                                {
+                                    "key": "hub.verify_token",
+                                    "value": "{{whatsapp_verify_token}}"
+                                },
+                                {
+                                    "key": "hub.challenge",
+                                    "value": "CHALLENGE_ACCEPTED"
+                                }
+                            ]
+                        },
+                        "description": "Endpoint de verificación que usa Meta al registrar el webhook.\nDebe responder con el valor de hub.challenge si el token es válido."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Simular mensaje de texto entrante",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"object\": \"whatsapp_business_account\",\n  \"entry\": [\n    {\n      \"id\": \"WHATSAPP_BUSINESS_ACCOUNT_ID\",\n      \"changes\": [\n        {\n          \"value\": {\n            \"messaging_product\": \"whatsapp\",\n            \"metadata\": {\n              \"display_phone_number\": \"593999000000\",\n              \"phone_number_id\": \"PHONE_NUMBER_ID\"\n            },\n            \"contacts\": [\n              {\n                \"profile\": { \"name\": \"Samuel Inkeshki\" },\n                \"wa_id\": \"593980123456\"\n              }\n            ],\n            \"messages\": [\n              {\n                \"from\": \"593980123456\",\n                \"id\": \"wamid.test001\",\n                \"timestamp\": \"1716300000\",\n                \"type\": \"text\",\n                \"text\": { \"body\": \"hola\" }\n              }\n            ]\n          },\n          \"field\": \"messages\"\n        }\n      ]\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/whatsapp/webhook",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "whatsapp",
+                                "webhook"
+                            ]
+                        },
+                        "description": "Simula un mensaje de texto entrante de WhatsApp.\nCambia `from` por el número WA del funcionario de prueba (593XXXXXXXXX)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Simular botón interactivo",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"object\": \"whatsapp_business_account\",\n  \"entry\": [\n    {\n      \"id\": \"WHATSAPP_BUSINESS_ACCOUNT_ID\",\n      \"changes\": [\n        {\n          \"value\": {\n            \"messaging_product\": \"whatsapp\",\n            \"metadata\": {\n              \"display_phone_number\": \"593999000000\",\n              \"phone_number_id\": \"PHONE_NUMBER_ID\"\n            },\n            \"contacts\": [\n              {\n                \"profile\": { \"name\": \"Samuel Inkeshki\" },\n                \"wa_id\": \"593980123456\"\n              }\n            ],\n            \"messages\": [\n              {\n                \"from\": \"593980123456\",\n                \"id\": \"wamid.test002\",\n                \"timestamp\": \"1716300001\",\n                \"type\": \"interactive\",\n                \"interactive\": {\n                  \"type\": \"button_reply\",\n                  \"button_reply\": {\n                    \"id\": \"tcuc_own\",\n                    \"title\": \"Crear mi ticket\"\n                  }\n                }\n              }\n            ]\n          },\n          \"field\": \"messages\"\n        }\n      ]\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/whatsapp/webhook",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "whatsapp",
+                                "webhook"
+                            ]
+                        },
+                        "description": "Simula la pulsación de un botón interactivo.\nCambia `button_reply.id` por cualquier buttonId del sistema:\n\n— Welcome / Ticket creación:\n  tcuc_own, tcuc_other, mgmt_panel, ltuc_my_tickets\n\n— Selección de destinatario:\n  tcuc_beneficiary_confirm_yes, tcuc_beneficiary_confirm_no\n\n— Post-creación TIS:\n  mgmt_resolve_now, mgmt_resolve_later\n\n— Calificación WhatsApp:\n  rate_good, rate_bad, rate_false\n\n— Panel TIS:\n  mgmt_pending, mgmt_resolve\n\n— Resolución:\n  mgmt_resolve_yes, mgmt_resolve_false, mgmt_resolve_cancel"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Simular respuesta de Flow (creación de ticket)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"object\": \"whatsapp_business_account\",\n  \"entry\": [\n    {\n      \"id\": \"WHATSAPP_BUSINESS_ACCOUNT_ID\",\n      \"changes\": [\n        {\n          \"value\": {\n            \"messaging_product\": \"whatsapp\",\n            \"metadata\": {\n              \"display_phone_number\": \"593999000000\",\n              \"phone_number_id\": \"PHONE_NUMBER_ID\"\n            },\n            \"contacts\": [\n              {\n                \"profile\": { \"name\": \"Samuel Inkeshki\" },\n                \"wa_id\": \"593980123456\"\n              }\n            ],\n            \"messages\": [\n              {\n                \"from\": \"593980123456\",\n                \"id\": \"wamid.test003\",\n                \"timestamp\": \"1716300002\",\n                \"type\": \"interactive\",\n                \"interactive\": {\n                  \"type\": \"nfm_reply\",\n                  \"nfm_reply\": {\n                    \"response_json\": \"{\\\"categoria\\\":\\\"COMPUTERS\\\",\\\"ubicacion\\\":\\\"Piso 2 - Edificio Central\\\",\\\"descripcion\\\":\\\"El equipo no enciende desde esta mañana\\\"}\",\n                    \"body\": \"Formulario enviado\",\n                    \"name\": \"flow\"\n                  }\n                }\n              }\n            ]\n          },\n          \"field\": \"messages\"\n        }\n      ]\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/whatsapp/webhook",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "whatsapp",
+                                "webhook"
+                            ]
+                        },
+                        "description": "Simula el formulario de ticket completado desde el WhatsApp Flow.\nLa conversación debe estar en estado `ticket_awaiting_flow`.\n\nCategorías válidas en `categoria`:\n  INTERNET, COMPUTERS, PRINTERS, SERVERS, WIFI,\n  EMAIL, CABILDO, SIGDAR, SIGCAL, ERP, OTHER"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Simular respuesta de disponibilidad (Sí)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"object\": \"whatsapp_business_account\",\n  \"entry\": [\n    {\n      \"id\": \"WHATSAPP_BUSINESS_ACCOUNT_ID\",\n      \"changes\": [\n        {\n          \"value\": {\n            \"messaging_product\": \"whatsapp\",\n            \"metadata\": {\n              \"display_phone_number\": \"593999000000\",\n              \"phone_number_id\": \"PHONE_NUMBER_ID\"\n            },\n            \"contacts\": [\n              {\n                \"profile\": { \"name\": \"Samuel Inkeshki\" },\n                \"wa_id\": \"593980123456\"\n              }\n            ],\n            \"messages\": [\n              {\n                \"from\": \"593980123456\",\n                \"id\": \"wamid.test004\",\n                \"timestamp\": \"1716300003\",\n                \"type\": \"interactive\",\n                \"interactive\": {\n                  \"type\": \"button_reply\",\n                  \"button_reply\": {\n                    \"id\": \"availability_yes\",\n                    \"title\": \"✅ Sí, disponible\"\n                  }\n                }\n              }\n            ]\n          },\n          \"field\": \"messages\"\n        }\n      ]\n    }\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/whatsapp/webhook",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "whatsapp",
+                                "webhook"
+                            ]
+                        },
+                        "description": "Simula la respuesta de un agente TIS al template de disponibilidad.\nUsar `availability_yes` o `availability_no` como button id."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Admin",
+            "description": "Endpoints de administración. Requieren header Authorization: Bearer <admin_secret>",
+            "item": [
+                {
+                    "name": "Enviar template de disponibilidad — cédulas de prueba (default)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_secret}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/availability/send",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "availability",
+                                "send"
+                            ]
+                        },
+                        "description": "Sin body (o body vacío {}) → envía a las dos cédulas de prueba:\n  0803768530 (Samuel) y 0802305581 (funcionario de prueba).\n\nAbre la ventana de 24h para ambos agentes y notifica al admin por WhatsApp."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Enviar template de disponibilidad — cédulas específicas",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_secret}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"cedulas\": [\n    \"0803768530\",\n    \"0802305581\"\n  ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/availability/send",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "availability",
+                                "send"
+                            ]
+                        },
+                        "description": "Envía el template solo a las cédulas listadas.\nÚtil para agregar agentes adicionales sin disparar el job completo."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Enviar template de disponibilidad — todos los agentes TIS",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{admin_secret}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"cedulas\": []\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/availability/send",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "availability",
+                                "send"
+                            ]
+                        },
+                        "description": "Array vacío → ejecuta el job completo: envía a TODOS los agentes TIS\nregistrados en el ERP. Equivalente al cron de las 8am."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Tickets — Calificación web",
+            "description": "Endpoint de calificación vía token. El funcionario llega aquí desde el link del correo.",
+            "item": [
+                {
+                    "name": "Calificar ticket — Bueno",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tickets/rate/{{rating_token}}?v=good",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets",
+                                "rate",
+                                "{{rating_token}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "v",
+                                    "value": "good"
+                                }
+                            ]
+                        },
+                        "description": "Califica el ticket como BUENO.\nEl token se obtiene de un ticket en estado RESOLVED (campo ratingToken en MongoDB).\n\nRespuesta: página HTML de confirmación."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Calificar ticket — Malo",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tickets/rate/{{rating_token}}?v=bad",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets",
+                                "rate",
+                                "{{rating_token}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "v",
+                                    "value": "bad"
+                                }
+                            ]
+                        },
+                        "description": "Califica el ticket como MALO."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Calificar ticket — No fue real",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tickets/rate/{{rating_token}}?v=false",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets",
+                                "rate",
+                                "{{rating_token}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "v",
+                                    "value": "false"
+                                }
+                            ]
+                        },
+                        "description": "Marca el ticket como TICKET FALSO desde la calificación del funcionario."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Calificar ticket — Token inválido (prueba de error)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/tickets/rate/token-invalido-00000000?v=good",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "tickets",
+                                "rate",
+                                "token-invalido-00000000"
+                            ],
+                            "query": [
+                                {
+                                    "key": "v",
+                                    "value": "good"
+                                }
+                            ]
+                        },
+                        "description": "Prueba el manejo de error cuando el token no existe.\nEspera respuesta HTML con mensaje de error y HTTP 410."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

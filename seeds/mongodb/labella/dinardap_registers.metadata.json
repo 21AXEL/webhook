@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"identificacion":{"$numberInt":"1"}},"name":"identificacion_1","background":true,"unique":true}],"uuid":"8111596996bd49a28f69454790f8d45b","collectionName":"dinardap_registers","type":"collection"}

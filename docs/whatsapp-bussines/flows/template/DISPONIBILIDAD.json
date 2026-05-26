@@ -1,0 +1,52 @@
+{
+    "screens": [
+        {
+            "data": {},
+            "id": "QUESTION_ONE",
+            "layout": {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "type": "TextBody",
+                                "text": "Buenos días 👋\n¿Estás disponible para atender tickets hoy? Horario de atención: 08:00 - 17:00"
+                            },
+                            {
+                                "data-source": [
+                                    {
+                                        "id": "0_Si",
+                                        "title": "Si"
+                                    },
+                                    {
+                                        "id": "1_No",
+                                        "title": "No"
+                                    }
+                                ],
+                                "label": "Disponible",
+                                "name": "Disponible_28f4fa",
+                                "required": true,
+                                "type": "Dropdown"
+                            },
+                            {
+                                "label": "Enviar",
+                                "on-click-action": {
+                                    "name": "complete",
+                                    "payload": {
+                                        "screen_0_Disponible_0": "${form.Disponible_28f4fa}"
+                                    }
+                                },
+                                "type": "Footer"
+                            }
+                        ],
+                        "name": "flow_path",
+                        "type": "Form"
+                    }
+                ],
+                "type": "SingleColumnLayout"
+            },
+            "terminal": true,
+            "title": "Estado de Disponibilidad"
+        }
+    ],
+    "version": "7.3"
+}
